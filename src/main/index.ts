@@ -2,10 +2,24 @@ import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import fs from 'fs'
+import { PNG } from 'pngjs/browser'
 
-async function intakePngs(_event, filePaths): Promise<string> {
-  console.log(filePaths)
-  return 'test'
+async function intakePngs(_event, filePaths): Promise<any> {
+  const terrainPixelData = processPng(filePaths['terrain'])
+  const vegetationPixelData = processPng(filePaths['vegetation'])
+  const waterPixelData = processPng(filePaths['water'])
+  return {
+    terrainPixelData,
+    vegetationPixelData,
+    waterPixelData
+  }
+}
+
+function processPng(filePath: string): Buffer<ArrayBufferLike> {
+  const data = fs.readFileSync(filePath)
+  const png = PNG.sync.read(data)
+  return png.data
 }
 
 async function handleFileOpen(): Promise<string[]> {

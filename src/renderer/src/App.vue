@@ -15,7 +15,6 @@ export default {
   methods: {
     async intakePngs(filePaths) {
       this.loading = true
-      console.log('intakePngs', filePaths)
       const response = await window.api.intakePngs(filePaths)
       console.log(response)
     }
