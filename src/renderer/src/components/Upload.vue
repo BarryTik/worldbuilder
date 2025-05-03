@@ -1,9 +1,9 @@
 <template>
-  <input type="file" multiple accept=".png" @change="fileChanged($event)" />
-  <p v-for="file of files" :key="file.name">
-    {{ file.name }}
-  </p>
-  <button v-if="files.length" @click="submit">START SIMULATION</button>
+  <button @click="openFile">SELECT FILES</button>
+  <p v-if="terrain">Terrain File: {{ terrain }}</p>
+  <p v-if="water">Water File: {{ water }}</p>
+  <p v-if="vegetation">Vegetation File: {{ vegetation }}</p>
+  <button v-if="terrain && water && vegetation" @click="submit">START SIMULATION</button>
 </template>
 
 <script lang="ts">
@@ -12,18 +12,35 @@ export default {
 
   data() {
     return {
-      files: []
+      terrain: '',
+      water: '',
+      vegetation: ''
     }
   },
 
   methods: {
-    fileChanged(event: Event) {
-      const inputElement = event.target as HTMLInputElement
-      const files: FileList = inputElement.files
-      this.files = files
-    },
     submit() {
-      this.$emit('start-sim')
+      const files = {
+        terrain: this.terrain,
+        water: this.water,
+        vegetation: this.vegetation
+      }
+      this.$emit('start-sim', files)
+    },
+    async openFile() {
+      const filePaths: string[] = await window.api.openFile()
+      const terrainFiles = filePaths.filter((p: string) => p.includes('terrain'))
+      const waterFiles = filePaths.filter((p: string) => p.includes('water'))
+      const vegetationFiles = filePaths.filter((p: string) => p.includes('vegetation'))
+      if (terrainFiles.length) {
+        this.terrain = terrainFiles[0]
+      }
+      if (waterFiles.length) {
+        this.water = waterFiles[0]
+      }
+      if (vegetationFiles.length) {
+        this.vegetation = vegetationFiles[0]
+      }
     }
   }
 }

@@ -1,8 +1,12 @@
 import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { ipcRenderer } from 'electron/renderer'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  intakePngs: (filePaths) => ipcRenderer.invoke('intakePngs', filePaths),
+  openFile: () => ipcRenderer.invoke('dialog:openFile')
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

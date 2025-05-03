@@ -1,9 +1,23 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import fs from 'fs'
-import { homedir } from 'os'
+
+async function intakePngs(_event, filePaths): Promise<string> {
+  console.log(filePaths)
+  return 'test'
+}
+
+async function handleFileOpen(): Promise<string[]> {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    filters: [{ name: 'Image', extensions: ['png'] }],
+    properties: ['openFile', 'multiSelections']
+  })
+  if (canceled) {
+    return []
+  }
+  return filePaths
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,18 +65,8 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
-
-  ipcMain.on('open-file-explorer', () => {
-    const home = homedir()
-    fs.opendir(home, (err, dir) => {
-      if (err) console.error(err)
-      else {
-        console.log(dir.path)
-      }
-    })
-  })
+  ipcMain.handle('intakePngs', intakePngs)
+  ipcMain.handle('dialog:openFile', handleFileOpen)
 
   createWindow()
 

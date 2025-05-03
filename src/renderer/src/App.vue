@@ -13,37 +13,19 @@ export default {
     }
   },
   methods: {
-    ipcHandle() {
-      window.electron.ipcRenderer.send('ping')
-    },
-    setStage(stage) {
+    async intakePngs(filePaths) {
       this.loading = true
-      this.stage = stage
+      console.log('intakePngs', filePaths)
+      const response = await window.api.intakePngs(filePaths)
+      console.log(response)
     }
   }
 }
 </script>
 
 <template>
-  <!--<img alt="logo" class="logo" src="./assets/electron.svg" />
-  <div class="creator">Powered by electron-vite</div>
-  <div class="text">
-    Build an Electron app with
-    <span class="vue">Vue</span>
-    and
-    <span class="ts">TypeScript</span>
-  </div>
-  <p class="tip">Please try pressing <code>F12</code> to open the devTool</p>
-  <div class="actions">
-    <div class="action">
-      <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">Documentation</a>
-    </div>
-    <div class="action">
-      <a target="_blank" rel="noreferrer" @click="ipcHandle">Send IPC</a>
-    </div>
-  </div>-->
   <Loading v-if="loading" />
   <div v-else>
-    <Upload @start-sim="setStage('start-sim')" />
+    <Upload @start-sim="intakePngs" />
   </div>
 </template>
