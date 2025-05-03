@@ -2,6 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import fs from 'fs'
+import { homedir } from 'os'
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,6 +53,16 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  ipcMain.on('open-file-explorer', () => {
+    const home = homedir()
+    fs.opendir(home, (err, dir) => {
+      if (err) console.error(err)
+      else {
+        console.log(dir.path)
+      }
+    })
+  })
 
   createWindow()
 

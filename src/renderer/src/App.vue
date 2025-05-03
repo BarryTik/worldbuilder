@@ -1,11 +1,31 @@
-<script setup lang="ts">
-import Versions from './components/Versions.vue'
-
-const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+<script lang="ts">
+import Loading from './components/Loading.vue'
+import Upload from './components/Upload.vue'
+export default {
+  components: {
+    Loading,
+    Upload
+  },
+  data() {
+    return {
+      loading: false,
+      stage: 'upload'
+    }
+  },
+  methods: {
+    ipcHandle() {
+      window.electron.ipcRenderer.send('ping')
+    },
+    setStage(stage) {
+      this.loading = true
+      this.stage = stage
+    }
+  }
+}
 </script>
 
 <template>
-  <img alt="logo" class="logo" src="./assets/electron.svg" />
+  <!--<img alt="logo" class="logo" src="./assets/electron.svg" />
   <div class="creator">Powered by electron-vite</div>
   <div class="text">
     Build an Electron app with
@@ -21,6 +41,9 @@ const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
     <div class="action">
       <a target="_blank" rel="noreferrer" @click="ipcHandle">Send IPC</a>
     </div>
+  </div>-->
+  <Loading v-if="loading" />
+  <div v-else>
+    <Upload @start-sim="setStage('start-sim')" />
   </div>
-  <Versions />
 </template>
