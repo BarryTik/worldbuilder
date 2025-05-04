@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts">
+import type { FilePaths } from '../../../types/types'
 export default {
   emits: ['start-sim'],
 
@@ -20,7 +21,7 @@ export default {
 
   methods: {
     submit() {
-      const files = {
+      const files: FilePaths = {
         terrain: this.terrain,
         water: this.water,
         vegetation: this.vegetation
