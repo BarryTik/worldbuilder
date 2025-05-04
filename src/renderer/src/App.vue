@@ -17,6 +17,7 @@ export default {
       this.loading = true
       const response = await window.api.intakePngs(filePaths)
       console.log(response)
+      this.loading = false
     }
   }
 }
