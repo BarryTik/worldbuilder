@@ -1,6 +1,7 @@
 <script lang="ts">
 import Loading from './components/Loading.vue'
 import Upload from './components/Upload.vue'
+import type { FilePaths } from '../../types/types'
 export default {
   components: {
     Loading,
@@ -13,7 +14,7 @@ export default {
     }
   },
   methods: {
-    async intakePngs(filePaths) {
+    async intakePngs(filePaths: FilePaths) {
       this.loading = true
       const response = await window.api.intakePngs(filePaths)
       console.log(response)

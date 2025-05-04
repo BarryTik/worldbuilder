@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { PNG } from 'pngjs/browser'
-import { FilePaths, RGBCode } from './types'
+import { FilePaths, RGBCode } from '../types/types'
 import { dialog } from 'electron'
 import { PixelData } from './pixel-data'
 

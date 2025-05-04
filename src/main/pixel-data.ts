@@ -1,4 +1,4 @@
-import { TerrainType, WaterType, VegetationType, RGBCode } from './types'
+import { TerrainType, WaterType, VegetationType, RGBCode } from '../types/types'
 
 export class PixelData {
   terrain: TerrainType
