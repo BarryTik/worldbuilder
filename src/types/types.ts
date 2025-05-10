@@ -15,7 +15,8 @@ export enum WaterType {
   RIVER = 'River',
   HARBOR = 'Harbor',
   OASIS = 'Oasis',
-  NONE = 'None'
+  NONE = 'None',
+  ERROR = 'Not Found'
 }
 
 export enum TerrainType {
@@ -23,7 +24,8 @@ export enum TerrainType {
   FLAT = 'Flat',
   HILLY = 'Hilly',
   MOUNTAIN = 'Mountain',
-  GLACIER = 'Glacier'
+  GLACIER = 'Glacier',
+  ERROR = 'Not Found'
 }
 
 export enum VegetationType {
@@ -35,5 +37,6 @@ export enum VegetationType {
   LIGHT_FOREST = 'Light Forest',
   DENSE_FOREST = 'Dense Forest',
   SWAMP = 'Swamp',
-  TUNDRA = 'Tundra'
+  TUNDRA = 'Tundra',
+  ERROR = 'Not Found'
 }

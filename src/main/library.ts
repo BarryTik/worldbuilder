@@ -36,12 +36,11 @@ function buildWorldObject(
   const height = 180
   const width = 360
   const pixelData: PixelData[] = []
-  for (let y = 0; y < width; y++) {
-    for (let x = 0; x < height; x++) {
-      const rCoordinate = x * 4 + y
-      const gCoordinate = x * 4 + y + 1
-      const bCoordinate = x * 4 + y + 2
-
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const rCoordinate = y * width + 4 * x
+      const gCoordinate = y * width + 4 * x + 1
+      const bCoordinate = y * width + 4 * x + 2
       const terrain: RGBCode = {
         r: terrainPixelData[rCoordinate],
         g: terrainPixelData[gCoordinate],

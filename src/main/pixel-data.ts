@@ -29,7 +29,10 @@ export class PixelData {
     if (r == 243 && g == 243 && b == 244) {
       return TerrainType.GLACIER
     }
-    return TerrainType.FLAT
+    if (r == 200 && g == 200 && b == 200) {
+      return TerrainType.FLAT
+    }
+    return TerrainType.ERROR
   }
 
   private assignWaterType(r: number, g: number, b: number): WaterType {
@@ -45,7 +48,10 @@ export class PixelData {
     if (r == 255 && g == 242 && b == 0) {
       return WaterType.OASIS
     }
-    return WaterType.NONE
+    if (r == 255 && g == 255 && b == 255) {
+      return WaterType.NONE
+    }
+    return WaterType.ERROR
   }
 
   private assignVegetationType(r: number, g: number, b: number): VegetationType {
@@ -73,6 +79,9 @@ export class PixelData {
     if (r == 192 && g == 212 && b == 207) {
       return VegetationType.TUNDRA
     }
-    return VegetationType.NONE
+    if (r == 226 && g == 227 && b == 228) {
+      return VegetationType.NONE
+    }
+    return VegetationType.ERROR
   }
 }

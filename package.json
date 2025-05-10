@@ -24,12 +24,14 @@
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "epic-spinners": "^2.0.0",
+    "lodash": "^4.17.21",
     "pngjs": "^7.0.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "3.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^22.14.1",
     "@types/pngjs": "^6.0.5",
     "@vitejs/plugin-vue": "^5.2.3",
