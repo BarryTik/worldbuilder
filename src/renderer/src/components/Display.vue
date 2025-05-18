@@ -4,6 +4,9 @@
       <Pixel :pixel="worldobject![getIndex(r, c)]" />
     </div>
   </div>
+  <div>
+    <button @click="restart">RESTART</button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,6 +21,7 @@ export default {
   props: {
     worldobject: { type: Array<PixelData> }
   },
+  emits: ['restart'],
   data() {
     return {}
   },
@@ -34,6 +38,9 @@ export default {
     },
     getIndex(row: number, column: number) {
       return row * 360 + column
+    },
+    restart() {
+      this.$emit('restart')
     }
   }
 }

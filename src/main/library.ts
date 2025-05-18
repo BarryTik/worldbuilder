@@ -33,32 +33,30 @@ function buildWorldObject(
   vegetationPixelData: Buffer<ArrayBufferLike>,
   waterPixelData: Buffer<ArrayBufferLike>
 ): PixelData[] {
-  const height = 180
-  const width = 360
   const pixelData: PixelData[] = []
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const rCoordinate = y * width + 4 * x
-      const gCoordinate = y * width + 4 * x + 1
-      const bCoordinate = y * width + 4 * x + 2
-      const terrain: RGBCode = {
-        r: terrainPixelData[rCoordinate],
-        g: terrainPixelData[gCoordinate],
-        b: terrainPixelData[bCoordinate]
-      }
-      const water: RGBCode = {
-        r: waterPixelData[rCoordinate],
-        g: waterPixelData[gCoordinate],
-        b: waterPixelData[bCoordinate]
-      }
-      const vegetation: RGBCode = {
-        r: vegetationPixelData[rCoordinate],
-        g: vegetationPixelData[gCoordinate],
-        b: vegetationPixelData[bCoordinate]
-      }
-      const pixel = new PixelData(x, y, terrain, water, vegetation)
-      pixelData.push(pixel)
+  for (let p = 0; p < waterPixelData.length; p = p + 4) {
+    const rCoordinate = p
+    const gCoordinate = p + 1
+    const bCoordinate = p + 2
+    const terrain: RGBCode = {
+      r: terrainPixelData[rCoordinate],
+      g: terrainPixelData[gCoordinate],
+      b: terrainPixelData[bCoordinate]
     }
+    const water: RGBCode = {
+      r: waterPixelData[rCoordinate],
+      g: waterPixelData[gCoordinate],
+      b: waterPixelData[bCoordinate]
+    }
+    const vegetation: RGBCode = {
+      r: vegetationPixelData[rCoordinate],
+      g: vegetationPixelData[gCoordinate],
+      b: vegetationPixelData[bCoordinate]
+    }
+    const x = (p / 4) % 360
+    const y = Math.floor(p / 4 / 180)
+    const pixel = new PixelData(x, y, terrain, water, vegetation)
+    pixelData.push(pixel)
   }
   return pixelData
 }
