@@ -1,9 +1,17 @@
 <template>
-  <button @click="openFile">SELECT FILES</button>
+  <div class="actions">
+    <div class="action">
+      <a target="_blank" rel="noreferrer" @click="openFile">Select Files</a>
+    </div>
+  </div>
   <p v-if="terrain">Terrain File: {{ terrain }}</p>
   <p v-if="water">Water File: {{ water }}</p>
   <p v-if="vegetation">Vegetation File: {{ vegetation }}</p>
-  <button v-if="terrain && water && vegetation" @click="submit">START SIMULATION</button>
+  <div v-if="terrain && water && vegetation" class="actions">
+    <div class="action">
+      <a target="_blank" rel="noreferrer" @click="submit">Submit</a>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
