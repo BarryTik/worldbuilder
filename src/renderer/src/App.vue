@@ -19,7 +19,36 @@ export default {
     return {
       loading: false,
       worldObject: [] as PixelData[],
-      page: 'upload'
+      page: 'upload',
+      weights: {
+        developmentIndex: 0,
+        distance: 0,
+        water: {
+          ocean: 0,
+          river: 0,
+          harbor: 0,
+          oasis: 0,
+          none: 0
+        },
+        terrain: {
+          water: 0,
+          flat: 0,
+          hilly: 0,
+          mountain: 0,
+          glacier: 0
+        },
+        vegetation: {
+          water: 0,
+          none: 0,
+          desert: 0,
+          grassland: 0,
+          savanna: 0,
+          lightForest: 0,
+          denseForest: 0,
+          swamp: 0,
+          tundra: 0
+        }
+      }
     }
   },
   methods: {
@@ -49,6 +78,9 @@ export default {
       } else {
         this.page = page
       }
+    },
+    setWeights(weights) {
+      this.weights = { ...weights }
     }
   }
 }
@@ -57,16 +89,26 @@ export default {
 <template>
   <AppMenu :simulation-active="worldObject.length > 0" @restart="restart" @navigate="navigate" />
   <Loading v-if="loading" />
-  <div v-else>
-    <div v-if="page == 'upload'">
+  <div v-else class="full-height">
+    <div v-if="page == 'upload'" class="full-height">
       <Upload @start-sim="intakePngs" />
     </div>
-    <div v-else-if="page == 'display'">
+    <div v-else-if="page == 'display'" class="full-height">
       <Display :worldobject="worldObject" />
     </div>
-    <div v-else-if="page == 'set-weights'">
-      <SetWeights />
+    <div v-else-if="page == 'set-weights'" class="full-height">
+      <SetWeights :inputweights="weights" @set-weights="setWeights" />
     </div>
-    <div v-else>X</div>
+    <div v-else class="full-height">X</div>
   </div>
 </template>
+
+<style>
+#app {
+  margin-top: 50px;
+  height: calc(100vh - 50px);
+}
+.full-height {
+  height: 100%;
+}
+</style>
