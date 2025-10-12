@@ -5,7 +5,9 @@ import { ipcRenderer } from 'electron/renderer'
 // Custom APIs for renderer
 const api = {
   intakePngs: (filePaths) => ipcRenderer.invoke('intakePngs', filePaths),
-  openFile: () => ipcRenderer.invoke('dialog:openFile')
+  openFile: () => ipcRenderer.invoke('dialog:openFile'),
+  rollCities: () => ipcRenderer.invoke('rollCities'),
+  setWeights: (weights) => ipcRenderer.invoke('setWeights', weights)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

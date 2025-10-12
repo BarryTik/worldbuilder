@@ -2,7 +2,7 @@
 import Loading from './components/Loading.vue'
 import Upload from './components/Upload.vue'
 import Display from './components/Display.vue'
-import { FilePaths } from '../../types/types'
+import { FilePaths, Weights } from '../../types/types'
 import { PixelData } from 'src/main/pixel-data'
 import AppMenu from './components/AppMenu.vue'
 import Swal from 'sweetalert2'
@@ -79,8 +79,14 @@ export default {
         this.page = page
       }
     },
-    setWeights(weights) {
+    async setWeights(weights: Weights) {
+      this.loading = true
+      await window.api.setWeights(JSON.stringify(weights))
       this.weights = { ...weights }
+      this.loading = false
+    },
+    setWorldObject(worldObject: PixelData[]) {
+      this.worldObject = worldObject
     }
   }
 }
@@ -94,7 +100,7 @@ export default {
       <Upload @start-sim="intakePngs" />
     </div>
     <div v-else-if="page == 'display'" class="full-height">
-      <Display :worldobject="worldObject" />
+      <Display :worldobject="worldObject" @set-world-object="setWorldObject" />
     </div>
     <div v-else-if="page == 'set-weights'" class="full-height">
       <SetWeights :inputweights="weights" @set-weights="setWeights" />

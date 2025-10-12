@@ -1,39 +1,49 @@
 <template>
-  <div v-for="r in 180" :key="r" class="row">
-    <div v-for="c in 360" :key="c">
-      <Pixel :pixel="worldobject![getIndex(r, c)]" />
+  <Loading v-if="loading" />
+  <div v-else>
+    <div>
+      <div v-for="r in 180" :key="r" class="row">
+        <div v-for="c in 360" :key="c">
+          <Pixel :pixel="worldobject![getIndex(r, c)]" />
+        </div>
+      </div>
+    </div>
+    <div class="button-row">
+      <button class="menu-button" @click="nextYear()">Next Year</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { flatten } from 'lodash'
 import { PixelData } from 'src/main/pixel-data'
-import { WaterType } from '../../../../src/types/types'
 import Pixel from './Pixel.vue'
+import Loading from './Loading.vue'
 export default {
   components: {
-    Pixel
+    Pixel,
+    Loading
   },
   props: {
     worldobject: { type: Array<PixelData> }
   },
+  emits: ['set-world-object'],
   data() {
-    return {}
+    return {
+      loading: false
+    }
   },
   methods: {
-    convertWorldObject() {
-      const pixels = this.$props.worldobject!.map((pixel) => {
-        if (pixel.water === WaterType.OCEAN) {
-          return [0, 174, 239]
-        }
-        return [255, 255, 255]
-      })
-      const flat = flatten(pixels)
-      return flat
-    },
     getIndex(row: number, column: number) {
       return row * 360 + column
+    },
+    async nextYear() {
+      this.loading = true
+      await this.rollCities()
+      this.loading = false
+    },
+    async rollCities() {
+      const response = await window.api.rollCities()
+      this.$emit('set-world-object', response)
     }
   }
 }
@@ -42,5 +52,10 @@ export default {
 .row {
   display: flex;
   flex-direction: row;
+}
+.button-row {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
 }
 </style>

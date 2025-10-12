@@ -1,8 +1,9 @@
 import fs from 'fs'
 import { PNG } from 'pngjs/browser'
-import { FilePaths, RGBCode } from '../types/types'
+import { FilePaths, RGBCode, WaterType, Weights } from '../types/types'
 import { dialog } from 'electron'
 import { PixelData } from './pixel-data'
+import Store from 'electron-store'
 
 export async function handleFileOpen(): Promise<string[]> {
   const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -58,5 +59,42 @@ function buildWorldObject(
     const pixel = new PixelData(x, y, terrain, water, vegetation)
     pixelData.push(pixel)
   }
+  const store = new Store()
+  store.set('world-object', pixelData)
   return pixelData
+}
+
+export function rollCities(): PixelData[] {
+  console.log('rollCitites - backend')
+  const store = new Store()
+  const worldObject = store.get('world-object') as PixelData[]
+  const weights = store.get('weights') as Weights
+  for (const pixel of worldObject) {
+    if (pixel.city) {
+      calculateCityFall(pixel, weights)
+    } else {
+      calculateCityRise(pixel, weights)
+    }
+  }
+  console.log('end')
+  store.set('world-object', worldObject)
+  return worldObject
+}
+
+function calculateCityRise(pixel: PixelData, weights: Weights): void {
+  if (pixel.water == WaterType.HARBOR) {
+    pixel.city = true
+  }
+}
+
+function calculateCityFall(pixel: PixelData, weights: Weights): void {
+  if (pixel.city) {
+    pixel.city = false
+  }
+}
+
+export function setWeights(_event, weights: string): void {
+  const store = new Store()
+  store.set('weights', JSON.parse(weights))
+  return
 }

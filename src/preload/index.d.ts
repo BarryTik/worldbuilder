@@ -8,6 +8,8 @@ declare global {
     api: {
       intakePngs: (filePaths: FilePaths) => Promise<PixelData[]>
       openFile: () => Promise<string[]>
+      rollCities: () => Promise<PixelData[]>
+      setWeights: (weights: string) => Promize<void>
     }
   }
 }

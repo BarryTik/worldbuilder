@@ -40,3 +40,33 @@ export enum VegetationType {
   TUNDRA = 'Tundra',
   ERROR = 'Not Found'
 }
+
+export interface Weights {
+  developmentIndex: number
+  distance: number
+  water: {
+    ocean: number
+    river: number
+    harbor: number
+    oasis: number
+    none: number
+  }
+  terrain: {
+    water: number
+    flat: number
+    hilly: number
+    mountain: number
+    glacier: number
+  }
+  vegetation: {
+    water: number
+    none: number
+    desert: number
+    grassland: number
+    savanna: number
+    lightForest: number
+    denseForest: number
+    swamp: number
+    tundra: number
+  }
+}
