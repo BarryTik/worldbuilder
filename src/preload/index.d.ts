@@ -10,6 +10,7 @@ declare global {
       openFile: () => Promise<string[]>
       rollCities: () => Promise<PixelData[]>
       setWeights: (weights: string) => Promize<void>
+      getWeights: () => Promise<Weights>
     }
   }
 }

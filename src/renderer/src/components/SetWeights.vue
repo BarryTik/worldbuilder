@@ -27,19 +27,19 @@
       <div v-if="selectedType == 'water'">
         <div v-for="type of waterTypes" :key="type">
           {{ type }}
-          <input v-model="weights.water[type]" type="number" />
+          <input v-model="weights.water[type]" type="number" min="0" max="100" />
         </div>
       </div>
       <div v-if="selectedType == 'vegetation'">
         <div v-for="type of vegetationTypes" :key="type">
           {{ type }}
-          <input v-model="weights.vegetation[type]" type="number" />
+          <input v-model="weights.vegetation[type]" type="number" min="0" max="100" />
         </div>
       </div>
       <div v-if="selectedType == 'terrain'">
         <div v-for="type of terrainTypes" :key="type">
           {{ type }}
-          <input v-model="weights.terrain[type]" type="number" />
+          <input v-model="weights.terrain[type]" type="number" min="0" max="100" />
         </div>
       </div>
     </div>

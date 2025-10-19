@@ -1,13 +1,15 @@
 <template>
-  <div class="pixel" :class="getColor()"></div>
+  <div class="pixel" :class="getColor()" @click="onClick()"></div>
 </template>
 
 <script lang="ts">
-import { kebabCase } from 'lodash'
+import { camelCase, kebabCase } from 'lodash'
+import Swal from 'sweetalert2'
 
 export default {
   props: {
-    pixel: { type: Object }
+    pixel: { type: Object },
+    weights: { type: Object }
   },
   methods: {
     getColor() {
@@ -15,6 +17,18 @@ export default {
         return 'city'
       }
       return kebabCase(this.pixel?.water)
+    },
+    onClick() {
+      Swal.fire({
+        title: `${this.pixel?.x}, ${this.pixel?.y}`,
+        html: `<p>Water: ${this.pixel?.water}</p><br><p>Terrain: ${this.pixel?.terrain}</p><br><p>Vegetation: ${this.pixel?.vegetation}</p><hr><p>Total Weight: ${this.getMapWeightForPixel()}</p><br>${this.pixel?.city ? '<h3>CITY</h3>' : ''}`
+      })
+    },
+    getMapWeightForPixel(): string {
+      const waterWeight = this.weights?.water[camelCase(this.pixel?.water)] || 0
+      const terrainWeight = this.weights?.terrain[camelCase(this.pixel?.terrain)] || 0
+      const vegetationWeight = this.weights?.terrain[camelCase(this.pixel?.vegetation)] || 0
+      return ((waterWeight + terrainWeight + vegetationWeight) / 3).toFixed(2)
     }
   }
 }
@@ -26,8 +40,8 @@ export default {
   width: 2px;
 }
 .city {
-  background-color: rgb(255, 168, 168);
-  animation: pulse 2s infinite;
+  /* background-color: rgb(255, 168, 168); */
+  background-color: black;
 }
 .ocean {
   background-color: rgb(0, 174, 239);

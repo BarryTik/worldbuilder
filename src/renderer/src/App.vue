@@ -51,6 +51,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getWeights()
+  },
   methods: {
     async intakePngs(filePaths: FilePaths) {
       this.loading = true
@@ -87,6 +90,9 @@ export default {
     },
     setWorldObject(worldObject: PixelData[]) {
       this.worldObject = worldObject
+    },
+    async getWeights() {
+      this.weights = await window.api.getWeights()
     }
   }
 }
@@ -100,7 +106,7 @@ export default {
       <Upload @start-sim="intakePngs" />
     </div>
     <div v-else-if="page == 'display'" class="full-height">
-      <Display :worldobject="worldObject" @set-world-object="setWorldObject" />
+      <Display :worldobject="worldObject" :weights="weights" @set-world-object="setWorldObject" />
     </div>
     <div v-else-if="page == 'set-weights'" class="full-height">
       <SetWeights :inputweights="weights" @set-weights="setWeights" />

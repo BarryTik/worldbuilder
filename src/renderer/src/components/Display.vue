@@ -4,10 +4,11 @@
     <div>
       <div v-for="r in 180" :key="r" class="row">
         <div v-for="c in 360" :key="c">
-          <Pixel :pixel="worldobject![getIndex(r, c)]" />
+          <Pixel :pixel="worldobject![getIndex(r, c)]" :weights="weights" />
         </div>
       </div>
     </div>
+    <h1>Number of Cities: {{ countCities() }}</h1>
     <div class="button-row">
       <button class="menu-button" @click="nextYear()">Next Year</button>
     </div>
@@ -24,7 +25,8 @@ export default {
     Loading
   },
   props: {
-    worldobject: { type: Array<PixelData> }
+    worldobject: { type: Array<PixelData> },
+    weights: { type: Object }
   },
   emits: ['set-world-object'],
   data() {
@@ -43,7 +45,15 @@ export default {
     },
     async rollCities() {
       const response = await window.api.rollCities()
+      this.countCities()
       this.$emit('set-world-object', response)
+    },
+    countCities() {
+      let numberOfCities = 0
+      for (const pixel of this.worldobject!) {
+        if (pixel.city) numberOfCities += 1
+      }
+      return numberOfCities
     }
   }
 }

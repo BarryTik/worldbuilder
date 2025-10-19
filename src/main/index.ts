@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { intakePngs, handleFileOpen, rollCities, setWeights } from './library'
+import { intakePngs, handleFileOpen, rollCities, setWeights, getWeights } from './library'
 
 function createWindow(): void {
   // Create the browser window.
@@ -54,6 +54,7 @@ app.whenReady().then(() => {
   ipcMain.handle('dialog:openFile', handleFileOpen)
   ipcMain.handle('rollCities', rollCities)
   ipcMain.handle('setWeights', setWeights)
+  ipcMain.handle('getWeights', getWeights)
 
   createWindow()
 

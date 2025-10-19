@@ -7,7 +7,8 @@ const api = {
   intakePngs: (filePaths) => ipcRenderer.invoke('intakePngs', filePaths),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
   rollCities: () => ipcRenderer.invoke('rollCities'),
-  setWeights: (weights) => ipcRenderer.invoke('setWeights', weights)
+  setWeights: (weights) => ipcRenderer.invoke('setWeights', weights),
+  getWeights: () => ipcRenderer.invoke('getWeights')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

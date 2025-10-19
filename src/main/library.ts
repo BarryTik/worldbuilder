@@ -1,9 +1,10 @@
 import fs from 'fs'
 import { PNG } from 'pngjs/browser'
-import { FilePaths, RGBCode, WaterType, Weights } from '../types/types'
+import { FilePaths, RGBCode, Weights } from '../types/types'
 import { dialog } from 'electron'
 import { PixelData } from './pixel-data'
 import Store from 'electron-store'
+import { camelCase } from 'lodash'
 
 export async function handleFileOpen(): Promise<string[]> {
   const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -65,30 +66,35 @@ function buildWorldObject(
 }
 
 export function rollCities(): PixelData[] {
-  console.log('rollCitites - backend')
+  let numCities = 0
   const store = new Store()
   const worldObject = store.get('world-object') as PixelData[]
-  const weights = store.get('weights') as Weights
+  const weights = getWeights()
   for (const pixel of worldObject) {
     if (pixel.city) {
       calculateCityFall(pixel, weights)
     } else {
       calculateCityRise(pixel, weights)
     }
+    if (pixel.city) numCities += 1
   }
-  console.log('end')
   store.set('world-object', worldObject)
+  console.log(numCities)
   return worldObject
 }
 
 function calculateCityRise(pixel: PixelData, weights: Weights): void {
-  if (pixel.water == WaterType.HARBOR) {
+  const random = Math.random() * 5000
+  const mapWeight = getMapWeightForPixel(pixel, weights) * weights.developmentIndex
+  if (random < mapWeight) {
     pixel.city = true
   }
 }
 
 function calculateCityFall(pixel: PixelData, weights: Weights): void {
-  if (pixel.city) {
+  const random = Math.random() * 5000
+  const mapWeight = getMapWeightForPixel(pixel, weights) * weights.developmentIndex
+  if (random > mapWeight) {
     pixel.city = false
   }
 }
@@ -97,4 +103,46 @@ export function setWeights(_event, weights: string): void {
   const store = new Store()
   store.set('weights', JSON.parse(weights))
   return
+}
+
+export function getWeights(): Weights {
+  const store = new Store()
+  if (!store.has('weights'))
+    return {
+      developmentIndex: 0,
+      distance: 0,
+      water: {
+        ocean: 0,
+        river: 0,
+        harbor: 0,
+        oasis: 0,
+        none: 0
+      },
+      terrain: {
+        water: 0,
+        flat: 0,
+        hilly: 0,
+        mountain: 0,
+        glacier: 0
+      },
+      vegetation: {
+        water: 0,
+        none: 0,
+        desert: 0,
+        grassland: 0,
+        savanna: 0,
+        lightForest: 0,
+        denseForest: 0,
+        swamp: 0,
+        tundra: 0
+      }
+    }
+  return store.get('weights') as Weights
+}
+
+function getMapWeightForPixel(pixel: PixelData, weights: Weights): number {
+  const waterWeight = weights.water[camelCase(pixel.water)] || 0
+  const terrainWeight = weights.terrain[camelCase(pixel.terrain)] || 0
+  const vegetationWeight = weights.terrain[camelCase(pixel.vegetation)] || 0
+  return (waterWeight + terrainWeight + vegetationWeight) / 300
 }
