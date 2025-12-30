@@ -1,4 +1,5 @@
 <template>
+  <h1>Year: {{ year }}</h1>
   <Loading v-if="loading" />
   <div v-else>
     <div>
@@ -10,7 +11,8 @@
     </div>
     <h1>Number of Cities: {{ countCities() }}</h1>
     <div class="button-row">
-      <button class="menu-button" @click="nextYear()">Next Year</button>
+      <button class="menu-button" @click="nextYear()">Advance Time</button>
+      <input v-model="interval" type="number" min="0" max="100" />
     </div>
   </div>
 </template>
@@ -31,7 +33,9 @@ export default {
   emits: ['set-world-object'],
   data() {
     return {
-      loading: false
+      loading: false,
+      interval: 1,
+      year: 0
     }
   },
   methods: {
@@ -40,7 +44,10 @@ export default {
     },
     async nextYear() {
       this.loading = true
-      await this.rollCities()
+      for (let i = 0; i < this.interval; i++) {
+        this.year++
+        await this.rollCities()
+      }
       this.loading = false
     },
     async rollCities() {

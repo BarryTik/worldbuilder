@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import { camelCase, kebabCase } from 'lodash'
+import { PixelData } from 'src/main/pixel-data'
 import Swal from 'sweetalert2'
 
 export default {
@@ -21,7 +22,7 @@ export default {
     onClick() {
       Swal.fire({
         title: `${this.pixel?.x}, ${this.pixel?.y}`,
-        html: `<p>Water: ${this.pixel?.water}</p><br><p>Terrain: ${this.pixel?.terrain}</p><br><p>Vegetation: ${this.pixel?.vegetation}</p><hr><p>Total Weight: ${this.getMapWeightForPixel()}</p><br>${this.pixel?.city ? '<h3>CITY</h3>' : ''}`
+        html: `<p>Water: ${this.pixel?.water}</p><br><p>Terrain: ${this.pixel?.terrain}</p><br><p>Vegetation: ${this.pixel?.vegetation}</p><hr><p>Total Weight: ${this.getMapWeightForPixel()}</p><br>${this.pixel?.city ? '<h3>CITY</h3>' : '<h4>no city</h4>'}<br>${this.pixel?.historyEvents?.length ? '<h3>History:</h3><p>' + this.formatHistory(this.pixel as PixelData) + '</p>' : ''}`
       })
     },
     getMapWeightForPixel(): string {
@@ -29,6 +30,13 @@ export default {
       const terrainWeight = this.weights?.terrain[camelCase(this.pixel?.terrain)] || 0
       const vegetationWeight = this.weights?.terrain[camelCase(this.pixel?.vegetation)] || 0
       return ((waterWeight + terrainWeight + vegetationWeight) / 3).toFixed(2)
+    },
+    formatHistory(pixel: PixelData) {
+      let events: string[] = []
+      for (const event of pixel.historyEvents) {
+        events.push(`${event.year}: ${event.event}`)
+      }
+      return events.join('\n')
     }
   }
 }

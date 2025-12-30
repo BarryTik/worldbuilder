@@ -7,6 +7,12 @@ export interface PixelData {
   city: boolean
   x: number
   y: number
+  historyEvents: HistoryEvent[]
+}
+
+export interface HistoryEvent {
+  year: number
+  event: 'rise' | 'fall'
 }
 
 function assignTerrainType(r: number, g: number, b: number): TerrainType {
@@ -91,6 +97,7 @@ export function newPixel(
     terrain: assignTerrainType(terrain.r, terrain.g, terrain.b),
     vegetation: assignVegetationType(vegetation.r, vegetation.g, vegetation.b),
     water: assignWaterType(water.r, water.g, water.b),
-    city: false
+    city: false,
+    historyEvents: []
   }
 }

@@ -18,6 +18,8 @@ export async function handleFileOpen(): Promise<string[]> {
 }
 
 export function intakePngs(_event, filePaths: FilePaths): PixelData[] {
+  const store = new Store()
+  store.set('year', 0)
   const terrainPixelData = pngToRgbaArray(filePaths.terrain)
   const vegetationPixelData = pngToRgbaArray(filePaths.vegetation)
   const waterPixelData = pngToRgbaArray(filePaths.water)
@@ -68,13 +70,16 @@ function buildWorldObject(
 export function rollCities(): PixelData[] {
   const store = new Store()
   const worldObject = store.get('world-object') as PixelData[]
+  let year = store.get('year') as number
+  year++
+  store.set('year', year)
   const weights = getWeights()
   const pixelsWithCities = getPixelsWithCities(worldObject)
   for (const pixel of worldObject) {
     if (pixel.city) {
-      calculateCityFall(pixel, weights, pixelsWithCities)
+      calculateCityFall(pixel, weights, pixelsWithCities, year)
     } else {
-      calculateCityRise(pixel, weights, pixelsWithCities)
+      calculateCityRise(pixel, weights, pixelsWithCities, year)
     }
   }
   store.set('world-object', worldObject)
@@ -84,7 +89,8 @@ export function rollCities(): PixelData[] {
 function calculateCityRise(
   pixel: PixelData,
   weights: Weights,
-  pixelsWithCities: PixelData[]
+  pixelsWithCities: PixelData[],
+  year: number
 ): void {
   const random = Math.random() * 5000
   const mapWeight =
@@ -93,13 +99,18 @@ function calculateCityRise(
     getDistanceWeightForPixel(pixel, weights, pixelsWithCities)
   if (random < mapWeight) {
     pixel.city = true
+    pixel.historyEvents.push({
+      event: 'rise',
+      year
+    })
   }
 }
 
 function calculateCityFall(
   pixel: PixelData,
   weights: Weights,
-  pixelsWithCities: PixelData[]
+  pixelsWithCities: PixelData[],
+  year: number
 ): void {
   const random = Math.random() * 5000
   const mapWeight =
@@ -108,6 +119,10 @@ function calculateCityFall(
     getDistanceWeightForPixel(pixel, weights, pixelsWithCities)
   if (random > mapWeight) {
     pixel.city = false
+    pixel.historyEvents.push({
+      event: 'fall',
+      year
+    })
   }
 }
 
