@@ -2,7 +2,7 @@ import fs from 'fs'
 import { PNG } from 'pngjs/browser'
 import { FilePaths, RGBCode, Weights } from '../types/types'
 import { dialog } from 'electron'
-import { PixelData } from './pixel-data'
+import { newPixel, PixelData } from './pixel-data'
 import Store from 'electron-store'
 import { camelCase } from 'lodash'
 
@@ -57,7 +57,7 @@ function buildWorldObject(
     }
     const x = (p / 4) % 360
     const y = Math.floor(p / 4 / 180)
-    const pixel = new PixelData(x, y, terrain, water, vegetation)
+    const pixel = newPixel(x, y, terrain, water, vegetation)
     pixelData.push(pixel)
   }
   const store = new Store()
@@ -66,34 +66,46 @@ function buildWorldObject(
 }
 
 export function rollCities(): PixelData[] {
-  let numCities = 0
   const store = new Store()
   const worldObject = store.get('world-object') as PixelData[]
   const weights = getWeights()
+  const pixelsWithCities = getPixelsWithCities(worldObject)
   for (const pixel of worldObject) {
     if (pixel.city) {
-      calculateCityFall(pixel, weights)
+      calculateCityFall(pixel, weights, pixelsWithCities)
     } else {
-      calculateCityRise(pixel, weights)
+      calculateCityRise(pixel, weights, pixelsWithCities)
     }
-    if (pixel.city) numCities += 1
   }
   store.set('world-object', worldObject)
-  console.log(numCities)
   return worldObject
 }
 
-function calculateCityRise(pixel: PixelData, weights: Weights): void {
+function calculateCityRise(
+  pixel: PixelData,
+  weights: Weights,
+  pixelsWithCities: PixelData[]
+): void {
   const random = Math.random() * 5000
-  const mapWeight = getMapWeightForPixel(pixel, weights) * weights.developmentIndex
+  const mapWeight =
+    getMapWeightForPixel(pixel, weights) *
+    weights.developmentIndex *
+    getDistanceWeightForPixel(pixel, weights, pixelsWithCities)
   if (random < mapWeight) {
     pixel.city = true
   }
 }
 
-function calculateCityFall(pixel: PixelData, weights: Weights): void {
+function calculateCityFall(
+  pixel: PixelData,
+  weights: Weights,
+  pixelsWithCities: PixelData[]
+): void {
   const random = Math.random() * 5000
-  const mapWeight = getMapWeightForPixel(pixel, weights) * weights.developmentIndex
+  const mapWeight =
+    getMapWeightForPixel(pixel, weights) *
+    weights.developmentIndex *
+    getDistanceWeightForPixel(pixel, weights, pixelsWithCities)
   if (random > mapWeight) {
     pixel.city = false
   }
@@ -145,4 +157,59 @@ function getMapWeightForPixel(pixel: PixelData, weights: Weights): number {
   const terrainWeight = weights.terrain[camelCase(pixel.terrain)] || 0
   const vegetationWeight = weights.terrain[camelCase(pixel.vegetation)] || 0
   return (waterWeight + terrainWeight + vegetationWeight) / 300
+}
+
+function getDistanceWeightForPixel(
+  pixel: PixelData,
+  weights: Weights,
+  pixelsWithCities: PixelData[]
+): number {
+  let scale = 0
+  const breakpoints = [
+    { distance: 10, scale: 1 },
+    { distance: 25, scale: 0.75 },
+    { distance: 50, scale: 0.5 },
+    { distance: 100, scale: 0.25 }
+  ]
+  for (const breakpoint of breakpoints) {
+    if (cityIsWithinDistance(breakpoint.distance, pixel.x, pixel.y, pixelsWithCities)) {
+      scale = breakpoint.scale
+      break
+    }
+  }
+  return 1 + (scale * weights.distance) / 100
+}
+
+function cityIsWithinDistance(
+  distance: number,
+  x: number,
+  y: number,
+  pixelsWithCities: PixelData[]
+): boolean {
+  const firstCityWithinDistance = pixelsWithCities.find((p) => {
+    const d = Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2))
+    return d <= distance
+  })
+  return !!firstCityWithinDistance
+}
+
+function getPixelsWithCities(worldObject: PixelData[]): PixelData[] {
+  const pixelsWithCities = worldObject.filter((p) => p.city)
+  // duplicate pixels to mimic a continuously wrapping world
+  const roundWorldObject: PixelData[] = [...pixelsWithCities]
+  for (const pixel of pixelsWithCities) {
+    roundWorldObject.push(
+      ...[
+        { ...pixel, x: pixel.x + 360 },
+        { ...pixel, x: pixel.x - 360 },
+        { ...pixel, y: pixel.y + 180 },
+        { ...pixel, y: pixel.y - 180 },
+        { ...pixel, x: pixel.x + 360, y: pixel.y + 180 },
+        { ...pixel, x: pixel.x + 360, y: pixel.y - 180 },
+        { ...pixel, x: pixel.x - 360, y: pixel.y + 180 },
+        { ...pixel, x: pixel.x - 360, y: pixel.y - 180 }
+      ]
+    )
+  }
+  return roundWorldObject
 }
