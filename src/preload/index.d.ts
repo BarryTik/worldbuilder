@@ -9,8 +9,9 @@ declare global {
       intakePngs: (filePaths: FilePaths) => Promise<PixelData[]>
       openFile: () => Promise<string[]>
       rollCities: () => Promise<PixelData[]>
-      setWeights: (weights: string) => Promize<void>
+      setWeights: (weights: string) => Promise<void>
       getWeights: () => Promise<Weights>
+      exportPng: () => Promise<void>
     }
   }
 }

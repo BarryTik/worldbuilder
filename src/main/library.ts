@@ -5,11 +5,22 @@ import { dialog } from 'electron'
 import { newPixel, PixelData } from './pixel-data'
 import Store from 'electron-store'
 import { camelCase } from 'lodash'
+import path from 'path'
 
 export async function handleFileOpen(): Promise<string[]> {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     filters: [{ name: 'Image', extensions: ['png'] }],
     properties: ['openFile', 'multiSelections']
+  })
+  if (canceled) {
+    return []
+  }
+  return filePaths
+}
+
+async function selectDirectory(): Promise<string[]> {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openDirectory']
   })
   if (canceled) {
     return []
@@ -228,4 +239,27 @@ function getPixelsWithCities(worldObject: PixelData[]): PixelData[] {
     )
   }
   return roundWorldObject
+}
+
+export async function exportPng(): Promise<void> {
+  const dir = await selectDirectory()
+  if (!dir.length) return
+  const store = new Store()
+  const worldObject = store.get('world-object') as PixelData[]
+  const year = store.get('year') as number
+  const png = new PNG({
+    width: 360,
+    height: 180
+  })
+  const rgbArray: number[] = []
+  for (const pixel of worldObject) {
+    if (pixel?.city) {
+      rgbArray.push(...[0, 0, 0, 255])
+    } else {
+      rgbArray.push(...[255, 255, 255, 255])
+    }
+  }
+  png.data.set(rgbArray)
+  const filepath = path.join(dir[0], `cities-year-${year}.png`)
+  png.pack().pipe(fs.createWriteStream(filepath))
 }

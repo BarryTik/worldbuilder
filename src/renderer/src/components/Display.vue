@@ -16,6 +16,7 @@
         <input v-model="interval" type="number" min="0" max="100" />
       </button>
       <button class="menu-button" @click="exportCsv()">Export Data</button>
+      <button class="menu-button" @click="exportPng()">Export Map</button>
     </div>
   </div>
 </template>
@@ -76,6 +77,11 @@ export default {
       }
       const blob = new Blob([rows.join('\n')], { type: 'text/plain;charset=utf-8' })
       saveAs(blob, 'worldbuilder-history.csv')
+      this.loading = false
+    },
+    async exportPng() {
+      this.loading = true
+      await window.api.exportPng()
       this.loading = false
     }
   }
