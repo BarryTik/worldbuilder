@@ -20,6 +20,7 @@ export default {
       loading: false,
       worldObject: [] as PixelData[],
       page: 'upload',
+      year: 0,
       weights: {
         riseIndex: 0,
         fallIndex: 0,
@@ -56,10 +57,11 @@ export default {
     this.getWeights()
   },
   methods: {
-    async intakePngs(filePaths: FilePaths) {
+    async intakePngs(filePaths: FilePaths, year: number) {
       this.loading = true
-      const response = await window.api.intakePngs(filePaths)
+      const response = await window.api.intakePngs(filePaths, year)
       this.worldObject = response
+      this.year = year
       this.page = 'display'
       this.loading = false
     },
@@ -107,7 +109,12 @@ export default {
       <Upload @start-sim="intakePngs" />
     </div>
     <div v-else-if="page == 'display'" class="full-height">
-      <Display :worldobject="worldObject" :weights="weights" @set-world-object="setWorldObject" />
+      <Display
+        :worldobject="worldObject"
+        :weights="weights"
+        :start="year"
+        @set-world-object="setWorldObject"
+      />
     </div>
     <div v-else-if="page == 'set-weights'" class="full-height">
       <SetWeights :inputweights="weights" @set-weights="setWeights" />

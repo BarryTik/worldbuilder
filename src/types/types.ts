@@ -2,6 +2,7 @@ export interface FilePaths {
   terrain: string
   water: string
   vegetation: string
+  cities?: string
 }
 
 export interface RGBCode {

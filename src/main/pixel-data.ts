@@ -84,13 +84,32 @@ function assignVegetationType(r: number, g: number, b: number): VegetationType {
   return VegetationType.ERROR
 }
 
+function assignCityType(r: number, g: number, b: number): boolean {
+  if (r == 0 && g == 0 && b == 0) {
+    return true
+  }
+  return false
+}
+
 export function newPixel(
   x: number,
   y: number,
   terrain: RGBCode,
   water: RGBCode,
-  vegetation: RGBCode
+  vegetation: RGBCode,
+  city?: RGBCode
 ): PixelData {
+  if (city) {
+    return {
+      x,
+      y,
+      terrain: assignTerrainType(terrain.r, terrain.g, terrain.b),
+      vegetation: assignVegetationType(vegetation.r, vegetation.g, vegetation.b),
+      water: assignWaterType(water.r, water.g, water.b),
+      city: assignCityType(city.r, city.g, city.b),
+      historyEvents: []
+    }
+  }
   return {
     x,
     y,

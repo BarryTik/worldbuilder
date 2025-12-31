@@ -6,9 +6,9 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      intakePngs: (filePaths: FilePaths) => Promise<PixelData[]>
+      intakePngs: (filePaths: FilePaths, year: number) => Promise<PixelData[]>
       openFile: () => Promise<string[]>
-      rollCities: () => Promise<PixelData[]>
+      rollCities: () => Promise<{ worldObject: PixelData[]; year: number }>
       setWeights: (weights: string) => Promise<void>
       getWeights: () => Promise<Weights>
       exportPng: () => Promise<void>

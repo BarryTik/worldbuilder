@@ -1,5 +1,5 @@
 <template>
-  <h1>Year: {{ year }}</h1>
+  <h1>Year: {{ year || start }}</h1>
   <Loading v-if="loading" />
   <div v-else>
     <div>
@@ -33,7 +33,8 @@ export default {
   },
   props: {
     worldobject: { type: Array<PixelData> },
-    weights: { type: Object }
+    weights: { type: Object },
+    start: { type: Number }
   },
   emits: ['set-world-object'],
   data() {
@@ -50,15 +51,15 @@ export default {
     async nextYear() {
       this.loading = true
       for (let i = 0; i < this.interval; i++) {
-        this.year++
         await this.rollCities()
       }
       this.loading = false
     },
     async rollCities() {
-      const response = await window.api.rollCities()
+      const { worldObject, year } = await window.api.rollCities()
+      this.year = year
       this.countCities()
-      this.$emit('set-world-object', response)
+      this.$emit('set-world-object', worldObject)
     },
     countCities() {
       let numberOfCities = 0

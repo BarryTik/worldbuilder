@@ -28,13 +28,18 @@ async function selectDirectory(): Promise<string[]> {
   return filePaths
 }
 
-export function intakePngs(_event, filePaths: FilePaths): PixelData[] {
+export function intakePngs(_event, filePaths: FilePaths, year: number): PixelData[] {
   const store = new Store()
-  store.set('year', 0)
+  store.set('year', year)
   const terrainPixelData = pngToRgbaArray(filePaths.terrain)
   const vegetationPixelData = pngToRgbaArray(filePaths.vegetation)
   const waterPixelData = pngToRgbaArray(filePaths.water)
-  return buildWorldObject(terrainPixelData, vegetationPixelData, waterPixelData)
+  if (filePaths.cities) {
+    const cityPixelData = pngToRgbaArray(filePaths.cities)
+    return buildWorldObject(terrainPixelData, vegetationPixelData, waterPixelData, cityPixelData)
+  } else {
+    return buildWorldObject(terrainPixelData, vegetationPixelData, waterPixelData)
+  }
 }
 
 function pngToRgbaArray(filePath: string): Buffer<ArrayBufferLike> {
@@ -46,7 +51,8 @@ function pngToRgbaArray(filePath: string): Buffer<ArrayBufferLike> {
 function buildWorldObject(
   terrainPixelData: Buffer<ArrayBufferLike>,
   vegetationPixelData: Buffer<ArrayBufferLike>,
-  waterPixelData: Buffer<ArrayBufferLike>
+  waterPixelData: Buffer<ArrayBufferLike>,
+  cityPixelData?: Buffer<ArrayBufferLike>
 ): PixelData[] {
   const pixelData: PixelData[] = []
   for (let p = 0; p < waterPixelData.length; p = p + 4) {
@@ -70,15 +76,25 @@ function buildWorldObject(
     }
     const x = (p / 4) % 360
     const y = Math.floor(p / 4 / 180)
-    const pixel = newPixel(x, y, terrain, water, vegetation)
-    pixelData.push(pixel)
+    if (cityPixelData) {
+      const city: RGBCode = {
+        r: cityPixelData[rCoordinate],
+        g: cityPixelData[gCoordinate],
+        b: cityPixelData[bCoordinate]
+      }
+      const pixel = newPixel(x, y, terrain, water, vegetation, city)
+      pixelData.push(pixel)
+    } else {
+      const pixel = newPixel(x, y, terrain, water, vegetation)
+      pixelData.push(pixel)
+    }
   }
   const store = new Store()
   store.set('world-object', pixelData)
   return pixelData
 }
 
-export function rollCities(): PixelData[] {
+export function rollCities(): { worldObject: PixelData[]; year: number } {
   const store = new Store()
   const worldObject = store.get('world-object') as PixelData[]
   let year = store.get('year') as number
@@ -94,7 +110,7 @@ export function rollCities(): PixelData[] {
     }
   }
   store.set('world-object', worldObject)
-  return worldObject
+  return { worldObject, year }
 }
 
 function calculateCityRise(

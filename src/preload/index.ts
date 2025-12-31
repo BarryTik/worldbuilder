@@ -4,7 +4,7 @@ import { ipcRenderer } from 'electron/renderer'
 
 // Custom APIs for renderer
 const api = {
-  intakePngs: (filePaths) => ipcRenderer.invoke('intakePngs', filePaths),
+  intakePngs: (filePaths, year) => ipcRenderer.invoke('intakePngs', filePaths, year),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
   rollCities: () => ipcRenderer.invoke('rollCities'),
   setWeights: (weights) => ipcRenderer.invoke('setWeights', weights),
