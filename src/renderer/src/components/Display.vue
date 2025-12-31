@@ -11,8 +11,11 @@
     </div>
     <h1>Number of Cities: {{ countCities() }}</h1>
     <div class="button-row">
-      <button class="menu-button" @click="nextYear()">Advance Time</button>
-      <input v-model="interval" type="number" min="0" max="100" />
+      <button class="menu-button">
+        <span @click="nextYear()">Advance Time</span>
+        <input v-model="interval" type="number" min="0" max="100" />
+      </button>
+      <button class="menu-button" @click="exportCsv()">Export Data</button>
     </div>
   </div>
 </template>
@@ -21,6 +24,7 @@
 import { PixelData } from 'src/main/pixel-data'
 import Pixel from './Pixel.vue'
 import Loading from './Loading.vue'
+import { saveAs } from 'file-saver'
 export default {
   components: {
     Pixel,
@@ -61,6 +65,18 @@ export default {
         if (pixel.city) numberOfCities += 1
       }
       return numberOfCities
+    },
+    exportCsv() {
+      this.loading = true
+      let rows = ['x,y,year,event']
+      for (const pixel of this.worldobject || []) {
+        for (const historyEvents of pixel.historyEvents) {
+          rows.push(`${pixel.x},${pixel.y},${historyEvents.year},${historyEvents.event}`)
+        }
+      }
+      const blob = new Blob([rows.join('\n')], { type: 'text/plain;charset=utf-8' })
+      saveAs(blob, 'worldbuilder-history.csv')
+      this.loading = false
     }
   }
 }
@@ -74,5 +90,11 @@ export default {
   margin-top: 10px;
   display: flex;
   justify-content: center;
+}
+.menu-button {
+  input {
+    width: 4em;
+    margin-left: 3px;
+  }
 }
 </style>
