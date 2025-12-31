@@ -21,7 +21,8 @@ export default {
       worldObject: [] as PixelData[],
       page: 'upload',
       weights: {
-        developmentIndex: 0,
+        riseIndex: 0,
+        fallIndex: 0,
         distance: 0,
         water: {
           ocean: 0,

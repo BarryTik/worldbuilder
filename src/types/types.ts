@@ -42,7 +42,8 @@ export enum VegetationType {
 }
 
 export interface Weights {
-  developmentIndex: number
+  riseIndex: number
+  fallIndex: number
   distance: number
   water: {
     ocean: number

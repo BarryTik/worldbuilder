@@ -95,7 +95,7 @@ function calculateCityRise(
   const random = Math.random() * 5000
   const mapWeight =
     getMapWeightForPixel(pixel, weights) *
-    weights.developmentIndex *
+    weights.riseIndex *
     getDistanceWeightForPixel(pixel, weights, pixelsWithCities)
   if (random < mapWeight) {
     pixel.city = true
@@ -112,12 +112,12 @@ function calculateCityFall(
   pixelsWithCities: PixelData[],
   year: number
 ): void {
-  const random = Math.random() * 5000
+  const random = Math.random() * 50
   const mapWeight =
     getMapWeightForPixel(pixel, weights) *
-    weights.developmentIndex *
+    weights.fallIndex *
     getDistanceWeightForPixel(pixel, weights, pixelsWithCities)
-  if (random > mapWeight) {
+  if (random < mapWeight) {
     pixel.city = false
     pixel.historyEvents.push({
       event: 'fall',
@@ -136,7 +136,8 @@ export function getWeights(): Weights {
   const store = new Store()
   if (!store.has('weights'))
     return {
-      developmentIndex: 0,
+      riseIndex: 0,
+      fallIndex: 0,
       distance: 0,
       water: {
         ocean: 0,

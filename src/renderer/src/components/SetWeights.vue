@@ -5,14 +5,12 @@
   <div v-else class="weights-content">
     <h1>Set Weights</h1>
     <div class="wrapper-flex-column">
-      <label for="development-index">Global Development Index (1-100)</label>
-      <input
-        id="development-index"
-        v-model="weights.developmentIndex"
-        type="number"
-        min="0"
-        max="100"
-      />
+      <label for="development-index">Global Development Index (Rise)</label>
+      <input id="rise-index" v-model="weights.riseIndex" type="number" min="0" max="100" />
+    </div>
+    <div class="wrapper-flex-column">
+      <label for="development-index">Global Development Index (Fall)</label>
+      <input id="fall-index" v-model="weights.fallIndex" type="number" min="0" max="100" />
     </div>
     <div class="wrapper-flex-column">
       <label for="distance">Distance Weight</label>

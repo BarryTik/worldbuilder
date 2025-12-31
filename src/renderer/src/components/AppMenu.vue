@@ -3,10 +3,10 @@
     <button class="menu-button" @click="navigate(simulationActive ? 'restart' : 'upload')">
       {{ simulationActive ? 'Restart' : 'Start' }}
     </button>
-    <button class="menu-button" :disabled="!simulationActive" @click="navigate('display')">
-      Display
-    </button>
     <button class="menu-button" @click="navigate('set-weights')">Set Weights</button>
+    <button class="menu-button" :disabled="!simulationActive" @click="navigate('display')">
+      Simulate
+    </button>
   </div>
 </template>
 

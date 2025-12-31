@@ -70,8 +70,8 @@ export default {
       this.loading = true
       let rows = ['x,y,year,event']
       for (const pixel of this.worldobject || []) {
-        for (const historyEvents of pixel.historyEvents) {
-          rows.push(`${pixel.x},${pixel.y},${historyEvents.year},${historyEvents.event}`)
+        for (const historyEvent of pixel.historyEvents) {
+          rows.push(`${pixel.x},${pixel.y},${historyEvent.year},${historyEvent.event}`)
         }
       }
       const blob = new Blob([rows.join('\n')], { type: 'text/plain;charset=utf-8' })
