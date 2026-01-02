@@ -48,24 +48,24 @@
 </template>
 <script lang="ts">
 import Loading from './Loading.vue'
-import { WaterType, VegetationType, TerrainType } from '../../../../src/types/types'
+import { WaterType, VegetationType, TerrainType, Weights } from '../../../../src/types/types'
 import { remove, camelCase } from 'lodash'
 export default {
   components: {
     Loading
   },
   props: {
-    inputweights: { type: Object }
+    inputweights: { type: Weights }
   },
   emits: ['set-weights'],
   data() {
     return {
       loading: true,
       selectedType: 'water',
-      waterTypes: [],
-      terrainTypes: [],
-      vegetationTypes: [],
-      weights: {}
+      waterTypes: [] as string[],
+      terrainTypes: [] as string[],
+      vegetationTypes: [] as string[],
+      weights: new Weights()
     }
   },
   mounted() {
@@ -79,7 +79,7 @@ export default {
       this.vegetationTypes = vegetationTypes.map((t) => camelCase(t))
       const terrainTypes = remove(Object.values(TerrainType), (i) => i !== 'Not Found')
       this.terrainTypes = terrainTypes.map((t) => camelCase(t))
-      this.weights = { ...this.inputweights }
+      this.weights = new Weights(this.inputweights)
       this.loading = false
     },
     selectType(type) {
