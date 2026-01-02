@@ -244,13 +244,7 @@ function getPixelsWithCities(worldObject: PixelData[]): PixelData[] {
     roundWorldObject.push(
       ...[
         { ...pixel, x: pixel.x + 360 },
-        { ...pixel, x: pixel.x - 360 },
-        { ...pixel, y: pixel.y + 180 },
-        { ...pixel, y: pixel.y - 180 },
-        { ...pixel, x: pixel.x + 360, y: pixel.y + 180 },
-        { ...pixel, x: pixel.x + 360, y: pixel.y - 180 },
-        { ...pixel, x: pixel.x - 360, y: pixel.y + 180 },
-        { ...pixel, x: pixel.x - 360, y: pixel.y - 180 }
+        { ...pixel, x: pixel.x - 360 }
       ]
     )
   }
